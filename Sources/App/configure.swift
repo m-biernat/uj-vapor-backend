@@ -11,6 +11,7 @@ public func configure(_ app: Application) throws {
 
     app.migrations.add(CreateProdukt())
     app.migrations.add(CreateKategoria())
+    app.migrations.add(CreateKoszyk())
     // register routes
     try routes(app)
 }

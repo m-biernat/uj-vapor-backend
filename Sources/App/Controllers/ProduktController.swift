@@ -21,7 +21,7 @@ struct ProduktController: RouteCollection {
     }
 
     func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        return Produkt.find(req.parameters.get("todoID"), on: req.db)
+        return Produkt.find(req.parameters.get("produktID"), on: req.db)
             .unwrap(or: Abort(.notFound))
             .flatMap { $0.delete(on: req.db) }
             .transform(to: .ok)

@@ -21,7 +21,7 @@ struct KategoriaController: RouteCollection {
     }
 
     func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        return Kategoria.find(req.parameters.get("todoID"), on: req.db)
+        return Kategoria.find(req.parameters.get("kategoriaID"), on: req.db)
             .unwrap(or: Abort(.notFound))
             .flatMap { $0.delete(on: req.db) }
             .transform(to: .ok)
