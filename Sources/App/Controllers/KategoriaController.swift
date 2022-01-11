@@ -3,21 +3,38 @@ import Vapor
 
 struct KategoriaController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
-        let todos = routes.grouped("kategoria")
-        todos.get(use: index)
-        todos.post(use: create)
-        todos.group(":kategoriaID") { todo in
-            todo.delete(use: delete)
-        }
+        let kategorie = routes.grouped("kategoria")
+        kategorie.get(use: index)
+        kategorie.post(use: create)
+        kategorie.get(":kategoriaID", use: read)
+        kategorie.put(":kategoriaID", use: update)
+        kategorie.delete(":kategoriaID", use: delete)
     }
 
     func index(req: Request) throws -> EventLoopFuture<[Kategoria]> {
-        return Kategoria.query(on: req.db).all()
+        return Kategoria.query(on: req.db)
+            .all()
     }
-
+    
     func create(req: Request) throws -> EventLoopFuture<Kategoria> {
-        let todo = try req.content.decode(Kategoria.self)
-        return todo.save(on: req.db).map { todo }
+        let kategoria = try req.content.decode(Kategoria.self)
+        return kategoria.save(on: req.db).map { kategoria }
+    }
+    
+    func read(req: Request) throws -> EventLoopFuture<Kategoria> {
+        return Kategoria.find(req.parameters.get("kategoriaID"), on: req.db)
+            .unwrap(or: Abort(.notFound))
+    }
+    
+    func update(req: Request) throws -> EventLoopFuture<Kategoria> {
+        let newKategoria = try req.content.decode(Kategoria.self)
+        return Kategoria.find(req.parameters.get("kategoriaID"), on: req.db)
+            .unwrap(or: Abort(.notFound))
+            .flatMap { kategoria in
+                kategoria.title = newKategoria.title
+                return kategoria.save(on: req.db)
+                    .map { kategoria }
+            }
     }
 
     func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {

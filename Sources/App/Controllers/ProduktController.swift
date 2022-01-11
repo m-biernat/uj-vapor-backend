@@ -6,18 +6,39 @@ struct ProduktController: RouteCollection {
         let produkty = routes.grouped("produkt")
         produkty.get(use: index)
         produkty.post(use: create)
-        produkty.group(":produktID") { produkt in
-            produkt.delete(use: delete)
-        }
+        produkty.get(":produktID", use: read)
+        produkty.put(":produktID", use: update)
+        produkty.delete(":produktID", use: delete)
     }
 
     func index(req: Request) throws -> EventLoopFuture<[Produkt]> {
-        return Produkt.query(on: req.db).all()
+        return Produkt.query(on: req.db)
+            .all()
     }
-
+    
     func create(req: Request) throws -> EventLoopFuture<Produkt> {
         let produkt = try req.content.decode(Produkt.self)
         return produkt.save(on: req.db).map { produkt }
+    }
+    
+    func read(req: Request) throws -> EventLoopFuture<Produkt> {
+        return Produkt.find(req.parameters.get("produktID"), on: req.db)
+            .unwrap(or: Abort(.notFound))
+    }
+    
+    func update(req: Request) throws -> EventLoopFuture<Produkt> {
+        let newProdukt = try req.content.decode(Produkt.self)
+        return Produkt.find(req.parameters.get("produktID"), on: req.db)
+            .unwrap(or: Abort(.notFound))
+            .flatMap { produkt in
+                produkt.title = newProdukt.title
+                produkt.description = newProdukt.description
+                produkt.image = newProdukt.image
+                produkt.quantity = newProdukt.quantity
+                produkt.kategoria_id = newProdukt.kategoria_id
+                return produkt.save(on: req.db)
+                    .map { produkt }
+            }
     }
 
     func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {

@@ -4,19 +4,15 @@ import Vapor
 struct KoszykController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let koszyki = routes.grouped("koszyk")
-        koszyki.get(use: index)
+        // koszyki.get(use: index)
         koszyki.post(use: create)
-        koszyki.get(":koszykID", use: read)
-        koszyki.put(":koszykID", use: update)
-        koszyki.delete(":koszykID", use: delete)
+        koszyki.get(":koszykID", use: getKoszyk)
+        koszyki.delete(":koszykID", use: deleteKoszyk)
         
-        
-        koszyki.group("klient", ":clientID") { koszyk in
-            koszyk.get(use: getKoszyk)
-        }
-        koszyki.group("klient", ":clientID") { koszyk in
-            koszyk.delete(use: deleteKoszyk)
-        }
+        let produkty = koszyki.grouped("produkt")
+        produkty.get(":produktID", use: read)
+        produkty.put(":produktID", use: update)
+        produkty.delete(":produktID", use: delete)
     }
 
     func index(req: Request) throws -> EventLoopFuture<[Koszyk]> {
@@ -30,13 +26,13 @@ struct KoszykController: RouteCollection {
     }
     
     func read(req: Request) throws -> EventLoopFuture<Koszyk> {
-        return Koszyk.find(req.parameters.get("koszykID"), on: req.db)
+        return Koszyk.find(req.parameters.get("produktID"), on: req.db)
             .unwrap(or: Abort(.notFound))
     }
     
     func update(req: Request) throws -> EventLoopFuture<Koszyk> {
         let newKoszyk = try req.content.decode(Koszyk.self)
-        return Koszyk.find(req.parameters.get("koszykID"), on: req.db)
+        return Koszyk.find(req.parameters.get("produktID"), on: req.db)
             .unwrap(or: Abort(.notFound))
             .flatMap { koszyk in
                 koszyk.quantity = newKoszyk.quantity
@@ -46,7 +42,7 @@ struct KoszykController: RouteCollection {
     }
 
     func delete(req: Request) throws -> EventLoopFuture<HTTPStatus> {
-        return Koszyk.find(req.parameters.get("koszykID"), on: req.db)
+        return Koszyk.find(req.parameters.get("produktID"), on: req.db)
             .unwrap(or: Abort(.notFound))
             .flatMap { $0.delete(on: req.db) }
             .transform(to: .ok)
@@ -55,13 +51,13 @@ struct KoszykController: RouteCollection {
     
     func getKoszyk(req: Request) throws -> EventLoopFuture<[Koszyk]> {
         return Koszyk.query(on: req.db)
-            .filter(\.$client_id == req.parameters.get("clientID"))
+            .filter(\.$client_id == req.parameters.get("koszykID"))
             .all()
     }
     
     func deleteKoszyk(req: Request) throws -> EventLoopFuture<HTTPStatus> {
         return Koszyk.query(on: req.db)
-            .filter(\.$client_id == req.parameters.get("clientID"))
+            .filter(\.$client_id == req.parameters.get("koszykID"))
             .all()
             .flatMap { $0.delete(on: req.db) }
             .transform(to: .ok)
