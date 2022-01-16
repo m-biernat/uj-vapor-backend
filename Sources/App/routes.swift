@@ -13,4 +13,6 @@ func routes(_ app: Application) throws {
     try app.register(collection: ProduktController())
     try app.register(collection: KategoriaController())
     try app.register(collection: KoszykController())
+    try app.register(collection: ZamowienieController())
+    try app.register(collection: ZamowienieProduktController())
 }
