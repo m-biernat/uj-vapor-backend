@@ -6,7 +6,7 @@ struct CreateZamowienie: Migration {
             .id()
             .field("client_id", .uuid, .required)
             .field("price", .double, .required)
-            .field("date", .datetime, .required)
+            .field("date", .string, .required)
             .field("paid", .bool, .required)
             .create()
         

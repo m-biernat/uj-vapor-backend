@@ -16,9 +16,13 @@ struct ZamowienieProduktController: RouteCollection {
             .all()
     }
     
-    func create(req: Request) throws -> EventLoopFuture<ZamowienieProdukt> {
-        let produkt = try req.content.decode(ZamowienieProdukt.self)
-        return produkt.save(on: req.db).map { produkt }
+    func create(req: Request) throws -> EventLoopFuture<[ZamowienieProdukt]> {
+        let produkty = try req.content.decode([ZamowienieProdukt].self)
+        
+        return produkty.map { produkt in
+            produkt.save(on: req.db).map { produkt }
+        }
+        .flatten(on: req.eventLoop)
     }
     
     func read(req: Request) throws -> EventLoopFuture<ZamowienieProdukt> {

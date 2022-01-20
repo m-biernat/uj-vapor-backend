@@ -14,14 +14,14 @@ final class Zamowienie: Model, Content {
     var price: Double
     
     @Field(key: "date")
-    var date: Date
+    var date: String
     
     @Field(key: "paid")
     var paid: Bool
     
     init() { }
 
-    init(id: UUID? = nil, client_id: UUID?, price: Double, date: Date, paid: Bool) {
+    init(id: UUID? = nil, client_id: UUID?, price: Double, date: String, paid: Bool) {
         self.id = id
         self.client_id = client_id
         self.price = price
