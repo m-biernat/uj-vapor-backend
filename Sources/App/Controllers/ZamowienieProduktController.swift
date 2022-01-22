@@ -9,6 +9,8 @@ struct ZamowienieProduktController: RouteCollection {
         produkty.get(":produktID", use: read)
         produkty.put(":produktID", use: update)
         produkty.delete(":produktID", use: delete)
+        
+        produkty.grouped("klient").get(":klientID", use: getOrderDetails)
     }
 
     func index(req: Request) throws -> EventLoopFuture<[ZamowienieProdukt]> {
@@ -50,5 +52,12 @@ struct ZamowienieProduktController: RouteCollection {
             .unwrap(or: Abort(.notFound))
             .flatMap { $0.delete(on: req.db) }
             .transform(to: .ok)
+    }
+    
+    func getOrderDetails(req: Request) throws -> EventLoopFuture<[ZamowienieProdukt]> {
+        return ZamowienieProdukt.query(on: req.db)
+            .join(Zamowienie.self, on: \ZamowienieProdukt.$zamowienie_id.$id == \Zamowienie.$id)
+            .filter(Zamowienie.self, \.$client_id == req.parameters.get("klientID"))
+            .all()
     }
 }

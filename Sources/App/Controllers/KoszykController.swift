@@ -4,7 +4,7 @@ import Vapor
 struct KoszykController: RouteCollection {
     func boot(routes: RoutesBuilder) throws {
         let koszyki = routes.grouped("koszyk")
-        // koszyki.get(use: index)
+        koszyki.get(use: index)
         koszyki.post(use: create)
         koszyki.get(":koszykID", use: getKoszyk)
         koszyki.delete(":koszykID", use: deleteKoszyk)
