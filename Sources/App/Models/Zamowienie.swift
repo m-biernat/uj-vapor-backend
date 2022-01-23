@@ -29,3 +29,14 @@ final class Zamowienie: Model, Content {
         self.paid = paid
     }
 }
+
+extension Zamowienie: Equatable {
+    static func == (lhs: Zamowienie, rhs: Zamowienie) -> Bool {
+        return
+            lhs.id == rhs.id &&
+            lhs.client_id == rhs.client_id &&
+            lhs.price == rhs.price &&
+            lhs.date == rhs.date &&
+            lhs.paid == rhs.paid
+    }
+}

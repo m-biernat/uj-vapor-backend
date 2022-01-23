@@ -17,3 +17,11 @@ final class Kategoria: Model, Content {
         self.title = title
     }
 }
+
+extension Kategoria: Equatable {
+    static func == (lhs: Kategoria, rhs: Kategoria) -> Bool {
+        return
+            lhs.id == rhs.id &&
+            lhs.title == rhs.title
+    }
+}

@@ -32,3 +32,14 @@ final class ZamowienieProdukt: Model, Content {
         self.price = price
     }
 }
+
+extension ZamowienieProdukt: Equatable {
+    static func == (lhs: ZamowienieProdukt, rhs: ZamowienieProdukt) -> Bool {
+        return
+            lhs.id == rhs.id &&
+            lhs.produkt_id == rhs.produkt_id &&
+            lhs.title == rhs.title &&
+            lhs.quantity == rhs.quantity &&
+            lhs.price == rhs.price
+    }
+}

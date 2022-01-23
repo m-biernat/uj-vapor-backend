@@ -36,7 +36,7 @@ struct ProduktController: RouteCollection {
                 produkt.image = newProdukt.image
                 produkt.quantity = newProdukt.quantity
                 produkt.price = newProdukt.price
-                produkt.kategoria_id = newProdukt.kategoria_id
+                produkt.$kategoria_id.id = newProdukt.$kategoria_id.id
                 return produkt.save(on: req.db)
                     .map { produkt }
             }

@@ -41,7 +41,7 @@ struct ZamowienieProduktController: RouteCollection {
                 produkt.title = newProdukt.title
                 produkt.quantity = newProdukt.quantity
                 produkt.price = newProdukt.price
-                produkt.zamowienie_id = newProdukt.zamowienie_id
+                produkt.$zamowienie_id.id = newProdukt.$zamowienie_id.id
                 return produkt.save(on: req.db)
                     .map { produkt }
             }

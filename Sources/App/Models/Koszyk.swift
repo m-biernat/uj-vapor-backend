@@ -25,3 +25,13 @@ final class Koszyk: Model, Content {
         self.quantity = quantity
     }
 }
+
+extension Koszyk: Equatable {
+    static func == (lhs: Koszyk, rhs: Koszyk) -> Bool {
+        return
+            lhs.id == rhs.id &&
+            lhs.client_id == rhs.client_id &&
+            lhs.$produkt_id.id == rhs.$produkt_id.id &&
+            lhs.quantity == rhs.quantity
+    }
+}
